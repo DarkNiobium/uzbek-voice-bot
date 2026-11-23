@@ -87,6 +87,24 @@ async def set_webhook_endpoint(request: Request):
         "message": "Webhook muvaffaqiyatli o'rnatildi! Endi bot Telegramda ishlaydi."
     }
 
+@app.get("/api/webhook_info")
+@app.get("/webhook_info")
+async def webhook_info_endpoint():
+    try:
+        current_bot = get_bot()
+        info = await current_bot.get_webhook_info()
+        return {
+            "url": info.url,
+            "has_custom_certificate": info.has_custom_certificate,
+            "pending_update_count": info.pending_update_count,
+            "last_error_date": str(info.last_error_date) if info.last_error_date else None,
+            "last_error_message": info.last_error_message,
+            "max_connections": info.max_connections,
+            "ip_address": info.ip_address
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/api/delete_webhook")
 @app.get("/delete_webhook")
 async def delete_webhook_endpoint():

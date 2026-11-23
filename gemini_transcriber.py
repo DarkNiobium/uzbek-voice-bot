@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 from typing import Optional
@@ -20,9 +21,10 @@ class GeminiTranscriber:
     @property
     def client(self) -> genai.Client:
         if self._client is None:
-            if not self.api_key:
+            key = self.api_key or os.getenv("GEMINI_API_KEY", "").strip()
+            if not key:
                 raise ValueError("GEMINI_API_KEY ko'rsatilmagan! .env faylida GEMINI_API_KEY ni belgilang.")
-            self._client = genai.Client(api_key=self.api_key)
+            self._client = genai.Client(api_key=key)
         return self._client
 
     def _get_system_prompt(self, script: str = "latin") -> str:
